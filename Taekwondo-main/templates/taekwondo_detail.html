@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健身冒險 - 跆拳道詳細姿態偵測</title>
+    <link rel="stylesheet" href="/static/css/taekwondo_detail.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2"></script>
+</head>
+<body>
+    <!-- 頭部導航 -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="/static/img/nkust.png" alt="健身冒險">
+            <span>健身冒險 - 跆拳道詳細姿態偵測</span>
+        </div>
+        <div class="nav-buttons">
+            <a href="/" class="button secondary">
+                <i class="fas fa-home"></i> 主頁
+            </a>
+        </div>
+    </header>
+
+    <!-- 主要內容區域 -->
+    <main class="main-content">
+        <!-- 影像顯示區域 -->
+        <section class="video-section">
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <canvas id="video-canvas" width="720" height="720"></canvas>
+                    <div class="video-overlay">
+                        <div class="recording-indicator" id="recording-indicator">
+                            <i class="fas fa-circle"></i>
+                            <span>即時檢測中</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-controls">
+                    <div class="camera-selection">
+                        <label for="camera-select" class="camera-label">
+                            <i class="fas fa-video"></i> 攝像頭選擇：
+                        </label>
+                        <select id="camera-select" class="camera-select">
+                            <option value="0">攝像頭 0 (預設)</option>
+                            <option value="1">攝像頭 1</option>
+                            <option value="2">攝像頭 2</option>
+                            <option value="3">攝像頭 3</option>
+                            <option value="4">攝像頭 4</option>
+                            <option value="5">攝像頭 5</option>
+                            <option value="6">攝像頭 6</option>
+                            <option value="7">攝像頭 7</option>
+                            <option value="8">攝像頭 8</option>
+                            <option value="9">攝像頭 9</option>
+                            <option value="10">攝像頭 10</option>
+                        </select>
+                        <button id="detect-cameras-btn" class="control-btn info small">
+                            <i class="fas fa-search"></i> 檢測攝像頭
+                        </button>
+                    </div>
+                    <div class="detection-controls">
+                        <button id="start-detection-btn" class="control-btn primary">
+                            <i class="fas fa-play"></i> 開始檢測
+                        </button>
+                        <button id="stop-detection-btn" class="control-btn danger" disabled>
+                            <i class="fas fa-stop"></i> 停止檢測
+                        </button>
+                        <button id="reset-detection-btn" class="control-btn secondary">
+                            <i class="fas fa-refresh"></i> 重置
+                        </button>
+                    </div>
+                    <div class="recording-status-display">
+                        <div class="recording-status" id="recording-status">
+                            <span class="status-text">未開始</span>
+                            <span class="recording-time" id="recording-time">00:00</span>
+                        </div>
+                        <div class="auto-recording-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>檢測時等待攝像頭啟動後自動開始錄製</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 數據分析區域 -->
+        <section class="analysis-section">
+            <!-- 即時角度資訊 -->
+            <div class="data-panel angles-panel">
+                <h3><i class="fas fa-ruler-combined"></i> 即時關節角度</h3>
+                <div class="angles-grid">
+                    <div class="angle-item">
+                        <span class="angle-label">左手肘</span>
+                        <span class="angle-value" id="left-elbow-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">右手肘</span>
+                        <span class="angle-value" id="right-elbow-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">左膝蓋</span>
+                        <span class="angle-value" id="left-knee-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">右膝蓋</span>
+                        <span class="angle-value" id="right-knee-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">左肩膀</span>
+                        <span class="angle-value" id="left-shoulder-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">右肩膀</span>
+                        <span class="angle-value" id="right-shoulder-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">左髖部</span>
+                        <span class="angle-value" id="left-hip-angle">0°</span>
+                    </div>
+                    <div class="angle-item">
+                        <span class="angle-label">右髖部</span>
+                        <span class="angle-value" id="right-hip-angle">0°</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 物理數據分析 -->
+            <div class="data-panel physics-panel">
+                <h3><i class="fas fa-chart-line"></i> 物理數據分析</h3>
+                <div class="physics-grid">
+                    <div class="physics-item">
+                        <span class="physics-label">左手肘角速度</span>
+                        <span class="physics-value" id="left-elbow-velocity">0 °/s</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">右手肘角速度</span>
+                        <span class="physics-value" id="right-elbow-velocity">0 °/s</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">左膝蓋角速度</span>
+                        <span class="physics-value" id="left-knee-velocity">0 °/s</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">右膝蓋角速度</span>
+                        <span class="physics-value" id="right-knee-velocity">0 °/s</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">左手肘角加速度</span>
+                        <span class="physics-value" id="left-elbow-acceleration">0 °/s²</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">右手肘角加速度</span>
+                        <span class="physics-value" id="right-elbow-acceleration">0 °/s²</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">左膝蓋角加速度</span>
+                        <span class="physics-value" id="left-knee-acceleration">0 °/s²</span>
+                    </div>
+                    <div class="physics-item">
+                        <span class="physics-label">右膝蓋角加速度</span>
+                        <span class="physics-value" id="right-knee-acceleration">0 °/s²</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 動作識別 -->
+            <div class="data-panel action-panel">
+                <h3><i class="fas fa-fist-raised"></i> 跆拳道動作識別</h3>
+                <div class="action-status">
+                    <div class="current-action">
+                        <span class="action-label">當前動作：</span>
+                        <span class="action-value" id="current-action">待檢測</span>
+                    </div>
+                    <div class="action-confidence">
+                        <span class="confidence-label">信心度：</span>
+                        <span class="confidence-value" id="action-confidence">0%</span>
+                    </div>
+                    <div class="action-count">
+                        <span class="count-label">動作計數：</span>
+                        <span class="count-value" id="action-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 圖表區域 -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <h3><i class="fas fa-chart-area"></i> 角度變化趨勢</h3>
+                <canvas id="angle-chart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3><i class="fas fa-tachometer-alt"></i> 角速度變化</h3>
+                <canvas id="velocity-chart" width="400" height="200"></canvas>
+            </div>
+        </section>
+
+        <section class="charts-section" id="time-slider-controls" style="margin-top:8px;">
+            <div class="chart-container" style="padding:8px;">
+                <label for="time-start" style="margin-right:8px;">時間瀏覽：</label>
+                <input id="time-start" type="range" min="0" max="0" step="1" value="0" style="width: 360px; vertical-align: middle;">
+                <span id="time-window-label" style="margin-left:8px; opacity:.8;">0s ~ 0s</span>
+            </div>
+        </section>
+
+        <!-- 錄影回放區塊 -->
+        <section class="charts-section" style="margin-top: 16px;">
+            <div class="chart-container" style="padding:16px;">
+                <h3><i class="fas fa-play-circle"></i> 錄影回放</h3>
+                <video id="recorded-player"
+                       controls
+                       style="width:100%; max-height:360px; border-radius:12px; background:#000;">
+                    您的瀏覽器不支援 HTML5 影片播放。
+                </video>
+                <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <button id="btn-play-original" class="control-btn secondary">
+                        <i class="fas fa-film"></i> 播放原始影片
+                    </button>
+                    <button id="btn-play-analysis" class="control-btn secondary">
+                        <i class="fas fa-project-diagram"></i> 播放分析影片
+                    </button>
+                    <span id="playback-hint" style="opacity:.8; margin-left:4px;">
+                        尚未有錄影資料
+                    </span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 載入 JavaScript 模組 -->
+    <script src="/static/js/taekwondo_detail_manager.js"></script>
+</body>
+</html>

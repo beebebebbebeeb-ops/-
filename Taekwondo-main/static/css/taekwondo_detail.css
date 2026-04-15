@@ -1,0 +1,456 @@
+/* 跆拳道詳細姿態偵測頁面樣式 */
+
+/* 基礎設置 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+}
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --accent-color: #f39c12;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --danger-color: #e74c3c;
+    --success-color: #27ae60;
+    --warning-color: #f1c40f;
+    --info-color: #3498db;
+    --taekwondo-primary: #8e44ad;
+    --taekwondo-secondary: #9b59b6;
+    --taekwondo-accent: #e67e22;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: var(--dark-color);
+}
+
+/* 頭部導航 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--taekwondo-primary), var(--taekwondo-secondary));
+    padding: 15px 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-container img {
+    height: 50px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.logo-container span {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.button.primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+}
+
+.button.secondary {
+    background: linear-gradient(45deg, #6c757d, #495057);
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* 主要內容區域 */
+.main-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 影像區域 */
+.video-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.video-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#video-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+.recording-indicator {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.recording-indicator.active {
+    display: flex;
+}
+
+.recording-indicator i {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.video-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.control-btn.primary {
+    background: linear-gradient(45deg, var(--success-color), var(--secondary-color));
+    color: white;
+}
+
+.control-btn.danger {
+    background: linear-gradient(45deg, var(--danger-color), #c0392b);
+    color: white;
+}
+
+.control-btn.secondary {
+    background: linear-gradient(45deg, #6c757d, #495057);
+    color: white;
+}
+
+.control-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+.control-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 數據分析區域 */
+.analysis-section {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.data-panel {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.data-panel h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--taekwondo-primary);
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-bottom: 2px solid var(--light-color);
+    padding-bottom: 10px;
+}
+
+/* 角度面板 */
+.angles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.angle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    border-left: 4px solid var(--taekwondo-primary);
+}
+
+.angle-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+}
+
+.angle-value {
+    font-weight: 700;
+    color: var(--taekwondo-primary);
+    font-size: 1.1rem;
+}
+
+/* 物理數據面板 */
+.physics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.physics-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border-radius: 8px;
+    border-left: 4px solid var(--taekwondo-accent);
+}
+
+.physics-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.85rem;
+}
+
+.physics-value {
+    font-weight: 700;
+    color: var(--taekwondo-accent);
+    font-size: 0.95rem;
+}
+
+/* 動作識別面板 */
+.action-status {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.current-action,
+.action-confidence,
+.action-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    border-radius: 10px;
+    border-left: 4px solid var(--info-color);
+}
+
+.action-label,
+.confidence-label,
+.count-label {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.action-value,
+.confidence-value,
+.count-value {
+    font-weight: 700;
+    color: var(--info-color);
+    font-size: 1.1rem;
+}
+
+/* 圖表區域 */
+.charts-section {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.chart-container h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: var(--taekwondo-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* 響應式設計 */
+@media (max-width: 1200px) {
+    .analysis-section {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .main-content {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .angles-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .video-controls {
+        flex-direction: column;
+    }
+    
+    .control-btn {
+        justify-content: center;
+    }
+}
+
+/* 圖表區域 */
+.charts-section {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border: 1px solid rgba(142, 68, 173, 0.1);
+}
+
+.chart-container h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--taekwondo-primary);
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-bottom: 2px solid var(--light-color);
+    padding-bottom: 10px;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 300px !important;
+}
+
+/* 錄製狀態顯示區域 */
+.recording-status-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.auto-recording-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--light-color);
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.auto-recording-note i {
+    color: var(--taekwondo-accent);
+}
